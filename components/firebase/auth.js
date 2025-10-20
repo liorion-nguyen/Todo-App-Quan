@@ -1,0 +1,26 @@
+import { v4 as uuidv4 } from 'https://cdn.jsdelivr.net/npm/uuid@11.0.2/+esm';
+import { signInWithPopup } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+import { addDoc, collection } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+import { auth, db, providerGG } from "../../config/firebase.js";
+
+export const signInWidthGoogle = () => {
+    signInWithPopup(auth, providerGG)
+    .then((result) => {
+        alert('Sign in successfully');
+    })
+    .catch((err) => {
+        alert('Sign in failed');
+    })
+}
+
+export const registerUser = async (userData) => {
+    let user = {
+        ...userData,
+        id: uuidv4(),
+        status: 'active',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+    }
+    await addDoc(collection(db, 'users'), user);
+    alert('Register successfully');
+}
