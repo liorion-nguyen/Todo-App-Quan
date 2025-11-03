@@ -1,16 +1,16 @@
 import { v4 as uuidv4 } from 'https://cdn.jsdelivr.net/npm/uuid@11.0.2/+esm';
 import { signInWithPopup } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
-import { addDoc, collection } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+import { addDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 import { auth, db, providerGG } from "../../config/firebase.js";
 
 export const signInWidthGoogle = () => {
     signInWithPopup(auth, providerGG)
-    .then((result) => {
-        alert('Sign in successfully');
-    })
-    .catch((err) => {
-        alert('Sign in failed');
-    })
+        .then((result) => {
+            alert('Sign in successfully');
+        })
+        .catch((err) => {
+            alert('Sign in failed');
+        })
 }
 
 export const registerUser = async (userData) => {
@@ -23,4 +23,11 @@ export const registerUser = async (userData) => {
     }
     await addDoc(collection(db, 'users'), user);
     alert('Register successfully');
+}
+
+export const signIn = async (email, password) => {
+    const users = await getDocs(collection(db, 'users'));
+    const usersData = users.docs.map(doc => doc.data());
+    const user = usersData.find(item => item.email === email && item.password === password);
+    return user;
 }
