@@ -3,14 +3,24 @@ import { signInWithPopup } from "https://www.gstatic.com/firebasejs/11.3.1/fireb
 import { addDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 import { auth, db, providerGG } from "../../config/firebase.js";
 
-export const signInWidthGoogle = () => {
-    signInWithPopup(auth, providerGG)
-        .then((result) => {
-            alert('Sign in successfully');
+export const signInWidthGoogle = async () => {
+    const result = await signInWithPopup(auth, providerGG);
+    if (!result.user.email) {
+        alert('Please login with email and password');
+        return;
+    }
+    const email = result.user.email;
+    const users = await getDocs(collection(db, 'users'));
+    const usersData = users.docs.map(doc => doc.data());
+    const user = usersData.find(item => item.email === email);
+    if (!user) {
+        await registerUser({
+            email: email,
+            name: result.user.displayName,
+            password: "123456",
         })
-        .catch((err) => {
-            alert('Sign in failed');
-        })
+    }
+    alert('Sign in successfully');
 }
 
 export const registerUser = async (userData) => {
